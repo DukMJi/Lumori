@@ -6,23 +6,88 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		65987DAA30392A8C00B9E22A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 65987DA830392A8C00B9E22A /* GoogleService-Info.plist */; };
+		65987DAB30392A8C00B9E22A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65987DA730392A8C00B9E22A /* Assets.xcassets */; };
+		65987DAC30392A8C00B9E22A /* ConnectedContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9E30392A8C00B9E22A /* ConnectedContentView.swift */; };
+		65987DAD30392A8C00B9E22A /* ExistingAccountSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9F30392A8C00B9E22A /* ExistingAccountSignInView.swift */; };
+		65987DAE30392A8C00B9E22A /* LumoriUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8B30392A8C00B9E22A /* LumoriUser.swift */; };
+		65987DAF30392A8C00B9E22A /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8630392A8C00B9E22A /* Color+Hex.swift */; };
+		65987DB030392A8C00B9E22A /* LaunchOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9930392A8C00B9E22A /* LaunchOverlayView.swift */; };
+		65987DB130392A8C00B9E22A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DA430392A8C00B9E22A /* SettingsView.swift */; };
+		65987DB230392A8C00B9E22A /* LaunchContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9830392A8C00B9E22A /* LaunchContainerView.swift */; };
+		65987DB330392A8C00B9E22A /* LumoriApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8430392A8C00B9E22A /* LumoriApp.swift */; };
+		65987DB430392A8C00B9E22A /* BeaconColorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8E30392A8C00B9E22A /* BeaconColorService.swift */; };
+		65987DB530392A8C00B9E22A /* UnpairedContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DA530392A8C00B9E22A /* UnpairedContentView.swift */; };
+		65987DB630392A8C00B9E22A /* LumoriConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8A30392A8C00B9E22A /* LumoriConnection.swift */; };
+		65987DB730392A8C00B9E22A /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8930392A8C00B9E22A /* Connection.swift */; };
+		65987DB830392A8C00B9E22A /* BeaconDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9C30392A8C00B9E22A /* BeaconDetailsView.swift */; };
+		65987DB930392A8C00B9E22A /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9330392A8C00B9E22A /* UserService.swift */; };
+		65987DBA30392A8C00B9E22A /* PartnerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8C30392A8C00B9E22A /* PartnerConnection.swift */; };
+		65987DBB30392A8C00B9E22A /* MyBeaconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DA130392A8C00B9E22A /* MyBeaconView.swift */; };
+		65987DBC30392A8C00B9E22A /* PairingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9230392A8C00B9E22A /* PairingService.swift */; };
+		65987DBD30392A8C00B9E22A /* BeaconStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8F30392A8C00B9E22A /* BeaconStore.swift */; };
+		65987DBE30392A8C00B9E22A /* ConnectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9530392A8C00B9E22A /* ConnectionStore.swift */; };
+		65987DBF30392A8C00B9E22A /* BeaconEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D8830392A8C00B9E22A /* BeaconEntry.swift */; };
+		65987DC030392A8C00B9E22A /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9030392A8C00B9E22A /* FirebaseAuthService.swift */; };
+		65987DC130392A8C00B9E22A /* PartnerBeaconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DA330392A8C00B9E22A /* PartnerBeaconView.swift */; };
+		65987DC230392A8C00B9E22A /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9B30392A8C00B9E22A /* AppRootView.swift */; };
+		65987DC330392A8C00B9E22A /* PairingCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9130392A8C00B9E22A /* PairingCodeService.swift */; };
+		65987DC430392A8C00B9E22A /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DA230392A8C00B9E22A /* PairingView.swift */; };
+		65987DC530392A8C00B9E22A /* LanternHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DA030392A8C00B9E22A /* LanternHistoryView.swift */; };
+		65987DC630392A8C00B9E22A /* BeaconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9D30392A8C00B9E22A /* BeaconView.swift */; };
+		65987DC730392A8C00B9E22A /* PartnerBeaconStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9630392A8C00B9E22A /* PartnerBeaconStore.swift */; };
+		65987DC930392D2B00B9E22A /* LumoriLoop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 65987DC830392D2B00B9E22A /* LumoriLoop.mp3 */; };
+		65987DCB30392E2F00B9E22A /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DCA30392E2F00B9E22A /* AudioManager.swift */; };
+		65987DCD303934FB00B9E22A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987DCC303934FB00B9E22A /* OnboardingView.swift */; };
+		65F22C443028FE7A0082F677 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 65F22C433028FE7A0082F677 /* FirebaseAuth */; };
+		65F22C463028FE810082F677 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 65F22C453028FE810082F677 /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		657176382FF753E0005E0BA1 /* Lumori.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumori.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		65987D8430392A8C00B9E22A /* LumoriApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumoriApp.swift; sourceTree = "<group>"; };
+		65987D8630392A8C00B9E22A /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		65987D8830392A8C00B9E22A /* BeaconEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconEntry.swift; sourceTree = "<group>"; };
+		65987D8930392A8C00B9E22A /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		65987D8A30392A8C00B9E22A /* LumoriConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumoriConnection.swift; sourceTree = "<group>"; };
+		65987D8B30392A8C00B9E22A /* LumoriUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumoriUser.swift; sourceTree = "<group>"; };
+		65987D8C30392A8C00B9E22A /* PartnerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerConnection.swift; sourceTree = "<group>"; };
+		65987D8E30392A8C00B9E22A /* BeaconColorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconColorService.swift; sourceTree = "<group>"; };
+		65987D8F30392A8C00B9E22A /* BeaconStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconStore.swift; sourceTree = "<group>"; };
+		65987D9030392A8C00B9E22A /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		65987D9130392A8C00B9E22A /* PairingCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingCodeService.swift; sourceTree = "<group>"; };
+		65987D9230392A8C00B9E22A /* PairingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingService.swift; sourceTree = "<group>"; };
+		65987D9330392A8C00B9E22A /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		65987D9530392A8C00B9E22A /* ConnectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStore.swift; sourceTree = "<group>"; };
+		65987D9630392A8C00B9E22A /* PartnerBeaconStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerBeaconStore.swift; sourceTree = "<group>"; };
+		65987D9830392A8C00B9E22A /* LaunchContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchContainerView.swift; sourceTree = "<group>"; };
+		65987D9930392A8C00B9E22A /* LaunchOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOverlayView.swift; sourceTree = "<group>"; };
+		65987D9B30392A8C00B9E22A /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
+		65987D9C30392A8C00B9E22A /* BeaconDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconDetailsView.swift; sourceTree = "<group>"; };
+		65987D9D30392A8C00B9E22A /* BeaconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconView.swift; sourceTree = "<group>"; };
+		65987D9E30392A8C00B9E22A /* ConnectedContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedContentView.swift; sourceTree = "<group>"; };
+		65987D9F30392A8C00B9E22A /* ExistingAccountSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingAccountSignInView.swift; sourceTree = "<group>"; };
+		65987DA030392A8C00B9E22A /* LanternHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanternHistoryView.swift; sourceTree = "<group>"; };
+		65987DA130392A8C00B9E22A /* MyBeaconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBeaconView.swift; sourceTree = "<group>"; };
+		65987DA230392A8C00B9E22A /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
+		65987DA330392A8C00B9E22A /* PartnerBeaconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerBeaconView.swift; sourceTree = "<group>"; };
+		65987DA430392A8C00B9E22A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		65987DA530392A8C00B9E22A /* UnpairedContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnpairedContentView.swift; sourceTree = "<group>"; };
+		65987DA730392A8C00B9E22A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		65987DA830392A8C00B9E22A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		65987DC830392D2B00B9E22A /* LumoriLoop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = LumoriLoop.mp3; sourceTree = "<group>"; };
+		65987DCA30392E2F00B9E22A /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		65987DCC303934FB00B9E22A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		6571763A2FF753E0005E0BA1 /* Lumori */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Lumori;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		657176352FF753E0005E0BA1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65F22C443028FE7A0082F677 /* FirebaseAuth in Frameworks */,
+				65F22C463028FE810082F677 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,7 +97,8 @@
 		6571762F2FF753E0005E0BA1 = {
 			isa = PBXGroup;
 			children = (
-				6571763A2FF753E0005E0BA1 /* Lumori */,
+				65987DA930392A8C00B9E22A /* Lumori */,
+				65F22C423028FE7A0082F677 /* Frameworks */,
 				657176392FF753E0005E0BA1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +109,109 @@
 				657176382FF753E0005E0BA1 /* Lumori.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		65987D8530392A8C00B9E22A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				65987D8430392A8C00B9E22A /* LumoriApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		65987D8730392A8C00B9E22A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				65987D8630392A8C00B9E22A /* Color+Hex.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		65987D8D30392A8C00B9E22A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				65987D8830392A8C00B9E22A /* BeaconEntry.swift */,
+				65987D8930392A8C00B9E22A /* Connection.swift */,
+				65987D8A30392A8C00B9E22A /* LumoriConnection.swift */,
+				65987D8B30392A8C00B9E22A /* LumoriUser.swift */,
+				65987D8C30392A8C00B9E22A /* PartnerConnection.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		65987D9430392A8C00B9E22A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				65987D8E30392A8C00B9E22A /* BeaconColorService.swift */,
+				65987D8F30392A8C00B9E22A /* BeaconStore.swift */,
+				65987D9030392A8C00B9E22A /* FirebaseAuthService.swift */,
+				65987D9130392A8C00B9E22A /* PairingCodeService.swift */,
+				65987D9230392A8C00B9E22A /* PairingService.swift */,
+				65987D9330392A8C00B9E22A /* UserService.swift */,
+				65987DCA30392E2F00B9E22A /* AudioManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		65987D9730392A8C00B9E22A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				65987D9530392A8C00B9E22A /* ConnectionStore.swift */,
+				65987D9630392A8C00B9E22A /* PartnerBeaconStore.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		65987D9A30392A8C00B9E22A /* Launch */ = {
+			isa = PBXGroup;
+			children = (
+				65987D9830392A8C00B9E22A /* LaunchContainerView.swift */,
+				65987D9930392A8C00B9E22A /* LaunchOverlayView.swift */,
+			);
+			path = Launch;
+			sourceTree = "<group>";
+		};
+		65987DA630392A8C00B9E22A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				65987D9A30392A8C00B9E22A /* Launch */,
+				65987D9B30392A8C00B9E22A /* AppRootView.swift */,
+				65987D9C30392A8C00B9E22A /* BeaconDetailsView.swift */,
+				65987D9D30392A8C00B9E22A /* BeaconView.swift */,
+				65987D9E30392A8C00B9E22A /* ConnectedContentView.swift */,
+				65987D9F30392A8C00B9E22A /* ExistingAccountSignInView.swift */,
+				65987DA030392A8C00B9E22A /* LanternHistoryView.swift */,
+				65987DA130392A8C00B9E22A /* MyBeaconView.swift */,
+				65987DA230392A8C00B9E22A /* PairingView.swift */,
+				65987DA330392A8C00B9E22A /* PartnerBeaconView.swift */,
+				65987DA430392A8C00B9E22A /* SettingsView.swift */,
+				65987DA530392A8C00B9E22A /* UnpairedContentView.swift */,
+				65987DCC303934FB00B9E22A /* OnboardingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		65987DA930392A8C00B9E22A /* Lumori */ = {
+			isa = PBXGroup;
+			children = (
+				65987D8530392A8C00B9E22A /* App */,
+				65987D8730392A8C00B9E22A /* Extensions */,
+				65987D8D30392A8C00B9E22A /* Models */,
+				65987D9430392A8C00B9E22A /* Services */,
+				65987D9730392A8C00B9E22A /* ViewModels */,
+				65987DA630392A8C00B9E22A /* Views */,
+				65987DA730392A8C00B9E22A /* Assets.xcassets */,
+				65987DA830392A8C00B9E22A /* GoogleService-Info.plist */,
+				65987DC830392D2B00B9E22A /* LumoriLoop.mp3 */,
+			);
+			path = Lumori;
+			sourceTree = "<group>";
+		};
+		65F22C423028FE7A0082F677 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -60,11 +229,10 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				6571763A2FF753E0005E0BA1 /* Lumori */,
-			);
 			name = Lumori;
 			packageProductDependencies = (
+				65F22C433028FE7A0082F677 /* FirebaseAuth */,
+				65F22C453028FE810082F677 /* FirebaseFirestore */,
 			);
 			productName = Lumori;
 			productReference = 657176382FF753E0005E0BA1 /* Lumori.app */;
@@ -78,7 +246,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2650;
-				LastUpgradeCheck = 2650;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					657176372FF753E0005E0BA1 = {
 						CreatedOnToolsVersion = 26.5;
@@ -94,6 +262,9 @@
 			);
 			mainGroup = 6571762F2FF753E0005E0BA1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				65F22C413028FD570082F677 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 657176392FF753E0005E0BA1 /* Products */;
 			projectDirPath = "";
@@ -109,6 +280,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65987DC930392D2B00B9E22A /* LumoriLoop.mp3 in Resources */,
+				65987DAA30392A8C00B9E22A /* GoogleService-Info.plist in Resources */,
+				65987DAB30392A8C00B9E22A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +293,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65987DAC30392A8C00B9E22A /* ConnectedContentView.swift in Sources */,
+				65987DAD30392A8C00B9E22A /* ExistingAccountSignInView.swift in Sources */,
+				65987DAE30392A8C00B9E22A /* LumoriUser.swift in Sources */,
+				65987DCD303934FB00B9E22A /* OnboardingView.swift in Sources */,
+				65987DAF30392A8C00B9E22A /* Color+Hex.swift in Sources */,
+				65987DB030392A8C00B9E22A /* LaunchOverlayView.swift in Sources */,
+				65987DB130392A8C00B9E22A /* SettingsView.swift in Sources */,
+				65987DB230392A8C00B9E22A /* LaunchContainerView.swift in Sources */,
+				65987DB330392A8C00B9E22A /* LumoriApp.swift in Sources */,
+				65987DB430392A8C00B9E22A /* BeaconColorService.swift in Sources */,
+				65987DB530392A8C00B9E22A /* UnpairedContentView.swift in Sources */,
+				65987DB630392A8C00B9E22A /* LumoriConnection.swift in Sources */,
+				65987DB730392A8C00B9E22A /* Connection.swift in Sources */,
+				65987DB830392A8C00B9E22A /* BeaconDetailsView.swift in Sources */,
+				65987DB930392A8C00B9E22A /* UserService.swift in Sources */,
+				65987DCB30392E2F00B9E22A /* AudioManager.swift in Sources */,
+				65987DBA30392A8C00B9E22A /* PartnerConnection.swift in Sources */,
+				65987DBB30392A8C00B9E22A /* MyBeaconView.swift in Sources */,
+				65987DBC30392A8C00B9E22A /* PairingService.swift in Sources */,
+				65987DBD30392A8C00B9E22A /* BeaconStore.swift in Sources */,
+				65987DBE30392A8C00B9E22A /* ConnectionStore.swift in Sources */,
+				65987DBF30392A8C00B9E22A /* BeaconEntry.swift in Sources */,
+				65987DC030392A8C00B9E22A /* FirebaseAuthService.swift in Sources */,
+				65987DC130392A8C00B9E22A /* PartnerBeaconView.swift in Sources */,
+				65987DC230392A8C00B9E22A /* AppRootView.swift in Sources */,
+				65987DC330392A8C00B9E22A /* PairingCodeService.swift in Sources */,
+				65987DC430392A8C00B9E22A /* PairingView.swift in Sources */,
+				65987DC530392A8C00B9E22A /* LanternHistoryView.swift in Sources */,
+				65987DC630392A8C00B9E22A /* BeaconView.swift in Sources */,
+				65987DC730392A8C00B9E22A /* PartnerBeaconStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,6 +387,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -239,6 +444,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -249,8 +455,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BHF2548QDZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -258,6 +466,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -265,6 +474,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.duk.Lumori;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -280,8 +490,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BHF2548QDZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -289,6 +501,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -296,6 +509,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.duk.Lumori;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -328,6 +542,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		65F22C413028FD570082F677 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.17.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		65F22C433028FE7A0082F677 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65F22C413028FD570082F677 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		65F22C453028FE810082F677 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65F22C413028FD570082F677 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 657176302FF753E0005E0BA1 /* Project object */;
 }

@@ -1,0 +1,43 @@
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+
+# Firebase configuration
+GoogleService-Info.plist
+
+# Secrets
+.env
+.env.*
+*.key
+*.p8
+
+# Old temporary repair folder
+New Group/
+
+# Loose design/reference files at repository root
+/AppIcon1.png
+/Inspo.png
+/Lumori.mp3
+/LumoriLoop.mp3
+/PaperLighthouseBase.png
+/PaperLighthouseBaseDark.png
+/draft*.png
+/feel.png
+/flats.png
+/icon*.png
+/ink.png
+/lighthouseScene.png
+/paper.png
