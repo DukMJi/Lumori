@@ -13,6 +13,12 @@ struct MyBeaconView: View {
 
     @EnvironmentObject
     private var beaconStore: BeaconStore
+    
+    // MARK: - Seen State
+
+    @StateObject
+    private var beaconSeenService =
+        BeaconSeenService()
 
     // MARK: - Services
 
@@ -153,6 +159,23 @@ struct MyBeaconView: View {
             .navigationTitle("Share")
             .navigationBarTitleDisplayMode(.inline)
             .preferredColorScheme(.dark)
+            .task(
+                id:
+                    beaconStore
+                        .currentMyBeacon?
+                        .id
+            ) {
+                await beaconSeenService
+                    .startListening(
+                        to:
+                            beaconStore
+                                .currentMyBeacon
+                    )
+            }
+            .onDisappear {
+                beaconSeenService
+                    .stopListening()
+            }
         }
     }
 
@@ -173,10 +196,46 @@ struct MyBeaconView: View {
                 .white.opacity(0.45)
             )
 
-            ShareBeaconPreview(
-                color: previewColor,
-                isActive:
-                    previewFeeling != nil
+            ZStack(alignment: .bottomTrailing) {
+
+                ShareBeaconPreview(
+                    color:
+                        previewColor,
+                    isActive:
+                        previewFeeling != nil
+                )
+
+                if hasCurrentBeacon &&
+                    !isEditingBeacon &&
+                    beaconSeenService
+                        .hasPartnerSeenCurrentBeacon {
+
+                    BeaconSeenIndicator()
+                        .transition(
+                            .opacity.combined(
+                                with:
+                                    .scale(
+                                        scale: 0.85
+                                    )
+                            )
+                        )
+                        .padding(
+                            .trailing,
+                            42
+                        )
+                        .padding(
+                            .bottom,
+                            8
+                        )
+                }
+            }
+            .animation(
+                .easeInOut(
+                    duration: 0.45
+                ),
+                value:
+                    beaconSeenService
+                        .hasPartnerSeenCurrentBeacon
             )
 
             if let previewFeeling {
@@ -637,6 +696,71 @@ struct MyBeaconView: View {
         }
 
         _ = wasUpdating
+    }
+}
+
+
+// MARK: - Beacon Seen Indicator
+
+/// A quiet visual acknowledgement that the connected partner opened
+/// today's beacon.
+///
+/// Lumori intentionally avoids messaging-style read receipt language,
+/// timestamps, checkmarks, or activity indicators.
+private struct BeaconSeenIndicator:
+    View {
+
+    var body: some View {
+
+        ZStack {
+
+            Circle()
+                .fill(
+                    Color(
+                        red: 1.0,
+                        green: 0.84,
+                        blue: 0.56
+                    )
+                    .opacity(0.12)
+                )
+                .frame(
+                    width: 24,
+                    height: 24
+                )
+                .blur(
+                    radius: 6
+                )
+
+            Circle()
+                .fill(
+                    Color(
+                        red: 1.0,
+                        green: 0.88,
+                        blue: 0.66
+                    )
+                )
+                .frame(
+                    width: 6,
+                    height: 6
+                )
+                .shadow(
+                    color:
+                        Color(
+                            red: 1.0,
+                            green: 0.82,
+                            blue: 0.50
+                        )
+                        .opacity(0.75),
+                    radius: 5
+                )
+        }
+        .frame(
+            width: 28,
+            height: 28
+        )
+        .accessibilityLabel(
+            "Your partner viewed this beacon"
+        )
     }
 }
 

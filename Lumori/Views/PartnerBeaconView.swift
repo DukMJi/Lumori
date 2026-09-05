@@ -21,6 +21,7 @@ struct PartnerBeaconView: View {
 
     @State private var isShowingDetails = false
     @State private var isShowingSettings = false
+    @StateObject private var beaconSeenService = BeaconSeenService()
 
     // MARK: - Body
 
@@ -184,10 +185,30 @@ struct PartnerBeaconView: View {
     // MARK: - Interaction
 
     private func toggleDetails() {
+
+        let isOpeningDetails =
+            !isShowingDetails
+
         withAnimation(
             .easeInOut(duration: 0.35)
         ) {
             isShowingDetails.toggle()
+        }
+
+        /*
+         Only an intentional reveal counts as seeing the beacon.
+         Closing the details does nothing.
+         */
+        if isOpeningDetails,
+           let partnerBeacon {
+
+            Task {
+                await beaconSeenService
+                    .markPartnerBeaconSeen(
+                        entry:
+                            partnerBeacon
+                    )
+            }
         }
     }
 

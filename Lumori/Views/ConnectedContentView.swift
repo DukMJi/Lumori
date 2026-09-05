@@ -5,11 +5,14 @@ import SwiftUI
 /// Provides Lumori's three primary destinations.
 ///
 /// Beacon shows the partner's current emotional update.
-/// Sea contains previous partner beacons.
+/// Sea contains both users' previous beacons.
 /// Share lets the current user create or update today's beacon.
 struct ConnectedContentView: View {
 
     // MARK: - Environment
+
+    @EnvironmentObject
+    private var beaconStore: BeaconStore
 
     @EnvironmentObject
     private var partnerBeaconStore: PartnerBeaconStore
@@ -35,7 +38,9 @@ struct ConnectedContentView: View {
             // MARK: Sea
 
             LanternHistoryView(
-                entries:
+                myEntries:
+                    beaconStore.historicalEntries,
+                partnerEntries:
                     partnerBeaconStore.historicalEntries
             )
             .tabItem {

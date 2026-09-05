@@ -2,11 +2,16 @@ import SwiftUI
 
 // MARK: - Lantern History View
 
-/// Displays previous partner beacons as a quiet sea of lights.
+/// Displays both users' previous beacons as a continuously moving sea of lights.
 ///
-/// Each historical beacon becomes a small emotion-colored light
-/// floating above the water with a subtle reflection below it.
-/// Newer entries appear larger and closer; older entries recede.
+/// A limited number of lights are visible at once. They slowly drift downward
+/// from the horizon, move subtly side-to-side, and recycle back to the top.
+///
+/// Newer entries appear larger and brighter.
+/// Older entries gradually become smaller and dimmer.
+///
+/// The full history remains available over time even though only a limited
+/// number of lights are visible simultaneously.
 struct LanternHistoryView: View {
 
     // MARK: - Environment
@@ -16,35 +21,69 @@ struct LanternHistoryView: View {
 
     // MARK: - Properties
 
-    let entries: [BeaconEntry]
+    let myEntries: [BeaconEntry]
+    let partnerEntries: [BeaconEntry]
 
     // MARK: - State
 
-    @State private var selectedEntry: BeaconEntry?
+    @State
+    private var selectedLight: HistoricalLight?
+
+    // MARK: - Configuration
+
+    /// Maximum number of historical lights visible simultaneously.
+    private let maximumVisibleLights = 16
 
     // MARK: - Body
 
     var body: some View {
         ZStack {
-            Color.black
+            animatedScene
                 .ignoresSafeArea()
 
-            animatedScene
-
-            if entries.isEmpty {
+            if historicalLights.isEmpty {
                 emptyState
             }
 
-            if let selectedEntry {
-                selectedDetails(for: selectedEntry)
-                    .transition(.opacity)
+            if let selectedLight {
+                selectedDetails(
+                    for: selectedLight
+                )
+                .transition(.opacity)
             }
         }
+        .ignoresSafeArea()
         .preferredColorScheme(.dark)
         .animation(
             .easeInOut(duration: 0.35),
-            value: selectedEntry?.id
+            value: selectedLight?.id
         )
+    }
+
+    // MARK: - Combined History
+
+    private var historicalLights: [HistoricalLight] {
+        let mine =
+            myEntries.map {
+                HistoricalLight(
+                    entry: $0,
+                    owner: .me
+                )
+            }
+
+        let partner =
+            partnerEntries.map {
+                HistoricalLight(
+                    entry: $0,
+                    owner: .partner
+                )
+            }
+
+        return (mine + partner)
+            .sorted {
+                $0.entry.date >
+                $1.entry.date
+            }
     }
 
     // MARK: - Animated Scene
@@ -52,14 +91,22 @@ struct LanternHistoryView: View {
     @ViewBuilder
     private var animatedScene: some View {
         if reduceMotion {
+
             scene(time: 0)
+
         } else {
+
             TimelineView(
-                .animation(minimumInterval: 1.0 / 30.0)
+                .animation(
+                    minimumInterval:
+                        1.0 / 30.0
+                )
             ) { timeline in
+
                 scene(
-                    time: timeline.date
-                        .timeIntervalSinceReferenceDate
+                    time:
+                        timeline.date
+                            .timeIntervalSinceReferenceDate
                 )
             }
         }
@@ -76,8 +123,11 @@ struct LanternHistoryView: View {
             ZStack {
                 paperSky(in: size)
 
-                stars(in: size)
-
+                stars(
+                    in: size,
+                    time: time
+                )
+                
                 moon(in: size)
 
                 clouds(in: size)
@@ -102,10 +152,10 @@ struct LanternHistoryView: View {
                 width: size.width,
                 height: size.height
             )
-            .clipped()
         }
+        .ignoresSafeArea()
     }
-
+    
     // MARK: - Sky
 
     private func paperSky(
@@ -137,20 +187,126 @@ struct LanternHistoryView: View {
 
     // MARK: - Stars
 
+    /// Draws Lumori's night sky.
+    ///
+    /// Most stars remain nearly still while a handful change brightness
+    /// very gradually. Each star uses a different phase and speed so the
+    /// sky never appears to pulse in unison.
     private func stars(
-        in size: CGSize
+        in size: CGSize,
+        time: TimeInterval
     ) -> some View {
         ZStack {
-            star(x: 0.08, y: 0.08, scale: 0.65, size: size)
-            star(x: 0.20, y: 0.14, scale: 0.45, size: size)
-            star(x: 0.32, y: 0.07, scale: 0.70, size: size)
-            star(x: 0.44, y: 0.18, scale: 0.40, size: size)
-            star(x: 0.58, y: 0.10, scale: 0.72, size: size)
-            star(x: 0.70, y: 0.16, scale: 0.50, size: size)
-            star(x: 0.83, y: 0.09, scale: 0.60, size: size)
-            star(x: 0.91, y: 0.21, scale: 0.78, size: size)
-            star(x: 0.13, y: 0.27, scale: 0.48, size: size)
-            star(x: 0.73, y: 0.27, scale: 0.52, size: size)
+
+            star(
+                x: 0.08,
+                y: 0.08,
+                scale: 0.65,
+                phase: 0.2,
+                speed: 0.23,
+                twinkleAmount: 0.27,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.20,
+                y: 0.14,
+                scale: 0.45,
+                phase: 1.7,
+                speed: 0.17,
+                twinkleAmount: 0.05,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.32,
+                y: 0.07,
+                scale: 0.70,
+                phase: 3.1,
+                speed: 0.28,
+                twinkleAmount: 0.34,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.44,
+                y: 0.18,
+                scale: 0.40,
+                phase: 4.8,
+                speed: 0.14,
+                twinkleAmount: 0.04,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.58,
+                y: 0.10,
+                scale: 0.72,
+                phase: 2.4,
+                speed: 0.21,
+                twinkleAmount: 0.12,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.70,
+                y: 0.16,
+                scale: 0.50,
+                phase: 5.9,
+                speed: 0.18,
+                twinkleAmount: 0.05,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.83,
+                y: 0.09,
+                scale: 0.60,
+                phase: 0.9,
+                speed: 0.31,
+                twinkleAmount: 0.30,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.91,
+                y: 0.21,
+                scale: 0.78,
+                phase: 6.7,
+                speed: 0.19,
+                twinkleAmount: 0.09,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.13,
+                y: 0.27,
+                scale: 0.48,
+                phase: 2.9,
+                speed: 0.15,
+                twinkleAmount: 0.04,
+                size: size,
+                time: time
+            )
+
+            star(
+                x: 0.73,
+                y: 0.27,
+                scale: 0.52,
+                phase: 4.1,
+                speed: 0.26,
+                twinkleAmount: 0.19,
+                size: size,
+                time: time
+            )
         }
     }
 
@@ -158,27 +314,71 @@ struct LanternHistoryView: View {
         x: CGFloat,
         y: CGFloat,
         scale: CGFloat,
-        size: CGSize
+        phase: Double,
+        speed: Double,
+        twinkleAmount: Double,
+        size: CGSize,
+        time: TimeInterval
     ) -> some View {
-        Circle()
+
+        let baseOpacity = 0.75
+
+        let twinkle: Double = {
+            guard !reduceMotion else {
+                return baseOpacity
+            }
+
+            return baseOpacity +
+                sin(
+                    time * speed +
+                    phase
+                ) *
+                twinkleAmount
+        }()
+
+        return Circle()
             .fill(
                 Color(
                     red: 1.0,
                     green: 0.92,
                     blue: 0.79
                 )
-                .opacity(0.72)
+                .opacity(
+                    max(
+                        0.32,
+                        min(
+                            twinkle,
+                            1.0
+                        )
+                    )
+                )
             )
             .frame(
-                width: size.width * 0.007 * scale,
-                height: size.width * 0.007 * scale
+                width:
+                    size.width *
+                    0.007 *
+                    scale,
+                height:
+                    size.width *
+                    0.007 *
+                    scale
+            )
+            .shadow(
+                color:
+                    Color.white.opacity(
+                        max(
+                            0,
+                            twinkle - 0.58
+                        )
+                    ),
+                radius: 2
             )
             .position(
                 x: size.width * x,
                 y: size.height * y
             )
     }
-
+    
     // MARK: - Moon
 
     private func moon(
@@ -203,13 +403,19 @@ struct LanternHistoryView: View {
                     )
                 )
                 .offset(
-                    x: size.width * 0.023,
-                    y: -size.width * 0.010
+                    x:
+                        size.width *
+                        0.023,
+                    y:
+                        -size.width *
+                        0.010
                 )
         }
         .frame(
-            width: size.width * 0.082,
-            height: size.width * 0.082
+            width:
+                size.width * 0.082,
+            height:
+                size.width * 0.082
         )
         .shadow(
             color: .black.opacity(0.30),
@@ -238,8 +444,10 @@ struct LanternHistoryView: View {
                     )
                 )
                 .frame(
-                    width: size.width * 0.37,
-                    height: size.height * 0.085
+                    width:
+                        size.width * 0.37,
+                    height:
+                        size.height * 0.085
                 )
                 .position(
                     x: size.width * 0.08,
@@ -255,8 +463,10 @@ struct LanternHistoryView: View {
                     )
                 )
                 .frame(
-                    width: size.width * 0.33,
-                    height: size.height * 0.075
+                    width:
+                        size.width * 0.33,
+                    height:
+                        size.height * 0.075
                 )
                 .position(
                     x: size.width * 0.92,
@@ -286,8 +496,10 @@ struct LanternHistoryView: View {
                     )
                 )
                 .frame(
-                    width: size.width * 1.20,
-                    height: size.height * 0.15
+                    width:
+                        size.width * 1.20,
+                    height:
+                        size.height * 0.15
                 )
                 .position(
                     x: size.width * 0.48,
@@ -303,8 +515,10 @@ struct LanternHistoryView: View {
                     )
                 )
                 .frame(
-                    width: size.width * 1.20,
-                    height: size.height * 0.11
+                    width:
+                        size.width * 1.20,
+                    height:
+                        size.height * 0.11
                 )
                 .position(
                     x: size.width * 0.60,
@@ -321,7 +535,9 @@ struct LanternHistoryView: View {
         ZStack {
             HistoryOceanShape(
                 phase: 0,
-                amplitude: size.height * 0.008
+                amplitude:
+                    size.height *
+                    0.008
             )
             .fill(
                 Color(
@@ -331,8 +547,10 @@ struct LanternHistoryView: View {
                 )
             )
             .frame(
-                width: size.width * 1.22,
-                height: size.height * 0.50
+                width:
+                    size.width * 1.22,
+                height:
+                    size.height * 0.50
             )
             .position(
                 x: size.width * 0.50,
@@ -341,7 +559,9 @@ struct LanternHistoryView: View {
 
             HistoryOceanShape(
                 phase: 1.4,
-                amplitude: size.height * 0.010
+                amplitude:
+                    size.height *
+                    0.010
             )
             .fill(
                 Color(
@@ -351,8 +571,10 @@ struct LanternHistoryView: View {
                 )
             )
             .frame(
-                width: size.width * 1.22,
-                height: size.height * 0.42
+                width:
+                    size.width * 1.22,
+                height:
+                    size.height * 0.42
             )
             .position(
                 x: size.width * 0.50,
@@ -361,7 +583,9 @@ struct LanternHistoryView: View {
 
             HistoryOceanShape(
                 phase: 2.7,
-                amplitude: size.height * 0.012
+                amplitude:
+                    size.height *
+                    0.012
             )
             .fill(
                 Color(
@@ -371,8 +595,10 @@ struct LanternHistoryView: View {
                 )
             )
             .frame(
-                width: size.width * 1.22,
-                height: size.height * 0.34
+                width:
+                    size.width * 1.22,
+                height:
+                    size.height * 0.34
             )
             .position(
                 x: size.width * 0.50,
@@ -387,14 +613,21 @@ struct LanternHistoryView: View {
         in size: CGSize,
         time: TimeInterval
     ) -> some View {
-        ZStack {
+
+        let visibleCount =
+            min(
+                maximumVisibleLights,
+                historicalLights.count
+            )
+
+        return ZStack {
             ForEach(
-                Array(displayEntries.enumerated()),
-                id: \.element.id
-            ) { index, entry in
-                historicalLight(
-                    entry: entry,
-                    index: index,
+                0..<visibleCount,
+                id: \.self
+            ) { slot in
+
+                driftingLight(
+                    slot: slot,
                     size: size,
                     time: time
                 )
@@ -402,112 +635,409 @@ struct LanternHistoryView: View {
         }
     }
 
-    private var displayEntries: [BeaconEntry] {
-        Array(
-            entries
-                .sorted { $0.date > $1.date }
-                .prefix(18)
-        )
-    }
+    // MARK: - Drifting Light
 
-    private func historicalLight(
-        entry: BeaconEntry,
-        index: Int,
+    @ViewBuilder
+    private func driftingLight(
+        slot: Int,
         size: CGSize,
         time: TimeInterval
     ) -> some View {
-        let placement =
-            lightPlacement(for: index)
+
+        if !historicalLights.isEmpty {
+
+            let motion =
+                motionProfile(
+                    for: slot
+                )
+
+            let cycle =
+                reduceMotion
+                    ? 0
+                    : Int(
+                        floor(
+                            time /
+                            motion.duration
+                        )
+                    )
+
+            let entryIndex =
+                (
+                    slot +
+                    cycle *
+                    maximumVisibleLights
+                )
+                %
+                historicalLights.count
+
+            let light =
+                historicalLights[
+                    entryIndex
+                ]
+
+            historicalLight(
+                light: light,
+                slot: slot,
+                size: size,
+                time: time,
+                motion: motion
+            )
+        }
+    }
+
+    private func historicalLight(
+        light: HistoricalLight,
+        slot: Int,
+        size: CGSize,
+        time: TimeInterval,
+        motion: LightMotionProfile
+    ) -> some View {
 
         let emotionColor =
-            Color(hex: entry.colorHex)
+            Color(
+                hex:
+                    light.entry.colorHex
+            )
+
+        let age =
+            ageStyle(
+                for:
+                    light.entry
+            )
+
+        let progress: Double = {
+            guard !reduceMotion else {
+                return motion.initialProgress
+            }
+
+            let raw =
+                (
+                    time /
+                    motion.duration
+                ) +
+                motion.initialProgress
+
+            return raw -
+                floor(raw)
+        }()
+
+        /*
+         Lights enter near the horizon and slowly travel toward
+         the bottom foreground.
+         */
+        let startY: CGFloat = 0.56
+        let endY: CGFloat = 1.02
+
+        let baseY =
+            startY +
+            (
+                endY - startY
+            ) *
+            CGFloat(progress)
+
+        let horizontalWander =
+            reduceMotion
+                ? 0
+                : sin(
+                    time *
+                    motion.wanderSpeed +
+                    motion.phase
+                ) *
+                motion.wanderAmount
 
         let bob =
             reduceMotion
                 ? 0
                 : sin(
-                    time * placement.speed +
-                    placement.phase
-                ) * placement.bobAmount
+                    time *
+                    motion.bobSpeed +
+                    motion.phase
+                ) *
+                motion.bobAmount
 
         let pulse =
             reduceMotion
                 ? 1
-                : 0.93 +
+                : 0.94 +
                     sin(
-                        time * 0.70 +
-                        placement.phase
-                    ) * 0.07
+                        time * 0.62 +
+                        motion.phase
+                    ) *
+                    0.06
+
+        /*
+         Fade gently at the beginning and end of each travel cycle
+         so recycling never looks like a hard teleport.
+         */
+        let edgeOpacity =
+            cycleOpacity(
+                progress
+            )
+
+        let ownerScale =
+            light.owner == .me
+                ? 0.96
+                : 1.0
+
+        let finalScale =
+            motion.scale *
+            age.scale *
+            ownerScale
 
         return Button {
             withAnimation(
-                .easeInOut(duration: 0.35)
+                .easeInOut(
+                    duration: 0.35
+                )
             ) {
-                selectedEntry = entry
+                selectedLight =
+                    light
             }
         } label: {
+
             ZStack {
-                lightReflection(
-                    color: emotionColor,
-                    intensity: pulse
-                )
-                .frame(
-                    width:
-                        size.width *
-                        placement.scale *
-                        1.35,
-                    height:
-                        size.width *
-                        placement.scale *
-                        1.05
-                )
-                .offset(
-                    y:
-                        size.width *
-                        placement.scale *
-                        0.62
-                )
 
                 lightGlow(
                     color: emotionColor,
-                    intensity: pulse
+                    intensity:
+                        pulse *
+                        age.brightness
                 )
                 .frame(
                     width:
                         size.width *
-                        placement.scale *
+                        finalScale *
                         1.65,
                     height:
                         size.width *
-                        placement.scale *
+                        finalScale *
                         1.20
                 )
 
                 lightCore(
                     color: emotionColor,
-                    intensity: pulse
+                    intensity:
+                        pulse *
+                        age.brightness,
+                    owner: light.owner
                 )
                 .frame(
                     width:
                         size.width *
-                        placement.scale *
+                        finalScale *
                         0.22,
                     height:
                         size.width *
-                        placement.scale *
+                        finalScale *
                         0.22
                 )
             }
-            .offset(y: bob)
+            .opacity(
+                edgeOpacity *
+                age.opacity
+            )
         }
         .buttonStyle(.plain)
         .position(
-            x: size.width * placement.x,
-            y: size.height * placement.y
+            x:
+                size.width *
+                (
+                    motion.baseX +
+                    horizontalWander
+                ),
+            y:
+                size.height *
+                baseY +
+                bob
         )
-        .zIndex(placement.zIndex)
+        .zIndex(
+            Double(
+                100 -
+                slot
+            )
+        )
         .accessibilityLabel(
-            "Beacon from \(entry.date.formatted(date: .abbreviated, time: .omitted))"
+            accessibilityLabel(
+                for: light
+            )
+        )
+    }
+
+    // MARK: - Age Styling
+
+    private func ageStyle(
+        for entry: BeaconEntry
+    ) -> AgeStyle {
+
+        let calendar =
+            Calendar.current
+
+        let days =
+            max(
+                0,
+                calendar.dateComponents(
+                    [.day],
+                    from:
+                        calendar.startOfDay(
+                            for: entry.date
+                        ),
+                    to:
+                        calendar.startOfDay(
+                            for: Date()
+                        )
+                ).day ?? 0
+            )
+
+        /*
+         Age affects the light gradually rather than through
+         obvious discrete categories.
+         */
+
+        let normalizedAge =
+            min(
+                Double(days) / 90.0,
+                1.0
+            )
+
+        let scale =
+            1.0 -
+            normalizedAge * 0.32
+
+        let brightness =
+            1.0 -
+            normalizedAge * 0.28
+
+        let opacity =
+            1.0 -
+            normalizedAge * 0.22
+
+        return AgeStyle(
+            scale: scale,
+            brightness: brightness,
+            opacity: opacity
+        )
+    }
+
+    // MARK: - Cycle Fade
+
+    private func cycleOpacity(
+        _ progress: Double
+    ) -> Double {
+
+        let fadeRange = 0.08
+
+        if progress < fadeRange {
+            return progress /
+                fadeRange
+        }
+
+        if progress >
+            1.0 - fadeRange {
+
+            return
+                (
+                    1.0 -
+                    progress
+                )
+                /
+                fadeRange
+        }
+
+        return 1.0
+    }
+
+    // MARK: - Motion Profiles
+
+    private func motionProfile(
+        for slot: Int
+    ) -> LightMotionProfile {
+
+        let xPositions: [CGFloat] = [
+            0.12,
+            0.31,
+            0.50,
+            0.72,
+            0.88,
+            0.22,
+            0.62,
+            0.40,
+            0.80,
+            0.16,
+            0.56,
+            0.92,
+            0.35,
+            0.68,
+            0.08,
+            0.47
+        ]
+
+        let initialProgresses: [Double] = [
+            0.04,
+            0.36,
+            0.67,
+            0.19,
+            0.82,
+            0.52,
+            0.11,
+            0.74,
+            0.29,
+            0.92,
+            0.45,
+            0.61,
+            0.15,
+            0.79,
+            0.56,
+            0.33
+        ]
+
+        let index =
+            slot %
+            xPositions.count
+
+        return LightMotionProfile(
+            baseX:
+                xPositions[index],
+            initialProgress:
+                initialProgresses[index],
+            duration:
+                64.0 +
+                Double(
+                    index % 5
+                ) *
+                5.5,
+            phase:
+                Double(index) *
+                0.83,
+            wanderSpeed:
+                0.075 +
+                Double(
+                    index % 4
+                ) *
+                0.012,
+            wanderAmount:
+                0.012 +
+                CGFloat(
+                    index % 3
+                ) *
+                0.006,
+            bobSpeed:
+                0.36 +
+                Double(
+                    index % 4
+                ) *
+                0.035,
+            bobAmount:
+                1.4 +
+                CGFloat(
+                    index % 3
+                ) *
+                0.55,
+            scale:
+                0.085 +
+                CGFloat(
+                    index % 5
+                ) *
+                0.008
         )
     }
 
@@ -515,27 +1045,62 @@ struct LanternHistoryView: View {
 
     private func lightCore(
         color: Color,
-        intensity: Double
+        intensity: Double,
+        owner: HistoricalOwner
     ) -> some View {
-        Circle()
-            .fill(
-                RadialGradient(
-                    colors: [
-                        Color.white.opacity(0.70),
-                        color.opacity(1.0 * intensity),
-                        color.opacity(0.65 * intensity),
-                        Color.clear
-                    ],
-                    center: .center,
-                    startRadius: 1,
-                    endRadius: 18
+
+        ZStack {
+
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            Color.white.opacity(
+                                0.70
+                            ),
+                            color.opacity(
+                                1.0 *
+                                intensity
+                            ),
+                            color.opacity(
+                                0.65 *
+                                intensity
+                            ),
+                            Color.clear
+                        ],
+                        center: .center,
+                        startRadius: 1,
+                        endRadius: 18
+                    )
                 )
-            )
-            .shadow(
-                color: color.opacity(0.80 * intensity),
-                radius: 6
-            )
-            .blendMode(.screen)
+                .shadow(
+                    color:
+                        color.opacity(
+                            0.80 *
+                            intensity
+                        ),
+                    radius: 6
+                )
+                .blendMode(.screen)
+
+            /*
+             Your own historical lights receive a very subtle
+             inner ring. Partner lights remain solid.
+
+             This distinguishes ownership without introducing
+             labels all over the Sea.
+             */
+            if owner == .me {
+                Circle()
+                    .stroke(
+                        Color.white.opacity(
+                            0.34
+                        ),
+                        lineWidth: 0.8
+                    )
+                    .padding(1.5)
+            }
+        }
     }
 
     // MARK: - Light Glow
@@ -548,9 +1113,18 @@ struct LanternHistoryView: View {
             .fill(
                 RadialGradient(
                     colors: [
-                        color.opacity(0.40 * intensity),
-                        color.opacity(0.18 * intensity),
-                        color.opacity(0.055 * intensity),
+                        color.opacity(
+                            0.40 *
+                            intensity
+                        ),
+                        color.opacity(
+                            0.18 *
+                            intensity
+                        ),
+                        color.opacity(
+                            0.055 *
+                            intensity
+                        ),
                         Color.clear
                     ],
                     center: .center,
@@ -567,127 +1141,25 @@ struct LanternHistoryView: View {
             .allowsHitTesting(false)
     }
 
-    // MARK: - Reflection
-
-    private func lightReflection(
-        color: Color,
-        intensity: Double
-    ) -> some View {
-        VStack(spacing: 2) {
-            reflectionStrip(
-                color: color,
-                width: 0.28,
-                opacity: 0.54 * intensity
-            )
-
-            reflectionStrip(
-                color: color,
-                width: 0.52,
-                opacity: 0.42 * intensity
-            )
-
-            reflectionStrip(
-                color: color,
-                width: 0.38,
-                opacity: 0.31 * intensity
-            )
-
-            reflectionStrip(
-                color: color,
-                width: 0.66,
-                opacity: 0.22 * intensity
-            )
-
-            reflectionStrip(
-                color: color,
-                width: 0.46,
-                opacity: 0.14 * intensity
-            )
-        }
-        .blendMode(.screen)
-    }
-
-    private func reflectionStrip(
-        color: Color,
-        width: CGFloat,
-        opacity: Double
-    ) -> some View {
-        GeometryReader { geometry in
-            Capsule()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color.clear,
-                            color.opacity(opacity),
-                            color.opacity(opacity * 0.72),
-                            Color.clear
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(
-                    width:
-                        geometry.size.width *
-                        width,
-                    height: 1.4
-                )
-                .position(
-                    x: geometry.size.width / 2,
-                    y: geometry.size.height / 2
-                )
-        }
-        .frame(height: 3)
-    }
-
-    // MARK: - Light Placement
-
-    private func lightPlacement(
-        for index: Int
-    ) -> LightPlacement {
-        let placements: [LightPlacement] = [
-            .init(x: 0.52, y: 0.69, scale: 0.18, phase: 0.0, speed: 0.55, bobAmount: 2.8, zIndex: 18),
-            .init(x: 0.28, y: 0.73, scale: 0.14, phase: 0.8, speed: 0.48, bobAmount: 2.4, zIndex: 17),
-            .init(x: 0.76, y: 0.74, scale: 0.13, phase: 1.6, speed: 0.52, bobAmount: 2.3, zIndex: 16),
-            .init(x: 0.15, y: 0.78, scale: 0.10, phase: 2.3, speed: 0.45, bobAmount: 2.0, zIndex: 15),
-            .init(x: 0.88, y: 0.79, scale: 0.095, phase: 2.9, speed: 0.50, bobAmount: 1.9, zIndex: 14),
-            .init(x: 0.42, y: 0.80, scale: 0.094, phase: 3.5, speed: 0.43, bobAmount: 1.9, zIndex: 13),
-            .init(x: 0.65, y: 0.82, scale: 0.085, phase: 4.0, speed: 0.49, bobAmount: 1.7, zIndex: 12),
-            .init(x: 0.24, y: 0.85, scale: 0.072, phase: 4.6, speed: 0.42, bobAmount: 1.5, zIndex: 11),
-            .init(x: 0.82, y: 0.86, scale: 0.068, phase: 5.1, speed: 0.46, bobAmount: 1.4, zIndex: 10),
-            .init(x: 0.50, y: 0.87, scale: 0.067, phase: 5.7, speed: 0.41, bobAmount: 1.4, zIndex: 9),
-            .init(x: 0.10, y: 0.89, scale: 0.055, phase: 6.2, speed: 0.44, bobAmount: 1.2, zIndex: 8),
-            .init(x: 0.91, y: 0.90, scale: 0.053, phase: 6.8, speed: 0.40, bobAmount: 1.1, zIndex: 7),
-            .init(x: 0.36, y: 0.91, scale: 0.052, phase: 7.2, speed: 0.38, bobAmount: 1.0, zIndex: 6),
-            .init(x: 0.69, y: 0.92, scale: 0.049, phase: 7.8, speed: 0.43, bobAmount: 1.0, zIndex: 5),
-            .init(x: 0.20, y: 0.94, scale: 0.042, phase: 8.3, speed: 0.37, bobAmount: 0.8, zIndex: 4),
-            .init(x: 0.79, y: 0.945, scale: 0.040, phase: 8.8, speed: 0.39, bobAmount: 0.8, zIndex: 3),
-            .init(x: 0.46, y: 0.955, scale: 0.037, phase: 9.3, speed: 0.36, bobAmount: 0.7, zIndex: 2),
-            .init(x: 0.61, y: 0.96, scale: 0.035, phase: 9.9, speed: 0.35, bobAmount: 0.7, zIndex: 1)
-        ]
-
-        return placements[
-            min(
-                index,
-                placements.count - 1
-            )
-        ]
-    }
-
     // MARK: - Foreground Water
 
     private func foregroundWater(
         in size: CGSize,
         time: TimeInterval
     ) -> some View {
+
         let phase =
             reduceMotion
                 ? 0
-                : CGFloat(time * 0.13)
+                : CGFloat(
+                    time * 0.13
+                )
 
         return HistoryOceanShape(
             phase: phase,
-            amplitude: size.height * 0.014
+            amplitude:
+                size.height *
+                0.014
         )
         .fill(
             Color(
@@ -697,15 +1169,19 @@ struct LanternHistoryView: View {
             )
         )
         .frame(
-            width: size.width * 1.22,
-            height: size.height * 0.18
+            width:
+                size.width * 1.22,
+            height:
+                size.height * 0.18
         )
         .position(
             x: size.width * 0.50,
             y: size.height * 0.97
         )
         .shadow(
-            color: .black.opacity(0.44),
+            color: .black.opacity(
+                0.44
+            ),
             radius: 3,
             x: 0,
             y: -3
@@ -716,17 +1192,26 @@ struct LanternHistoryView: View {
     // MARK: - Selected Details
 
     private func selectedDetails(
-        for entry: BeaconEntry
+        for light: HistoricalLight
     ) -> some View {
-        ZStack {
+
+        let entry =
+            light.entry
+
+        return ZStack {
+
             Color.black
                 .opacity(0.50)
                 .ignoresSafeArea()
 
             RadialGradient(
                 colors: [
-                    Color(hex: entry.colorHex)
-                        .opacity(0.16),
+                    Color(
+                        hex:
+                            entry.colorHex
+                    )
+                    .opacity(0.16),
+
                     Color.clear
                 ],
                 center: .center,
@@ -741,73 +1226,149 @@ struct LanternHistoryView: View {
             .allowsHitTesting(false)
 
             VStack(spacing: 0) {
+
                 Spacer()
 
                 LinearGradient(
                     colors: [
                         Color.clear,
-                        Color.black.opacity(0.20),
-                        Color.black.opacity(0.60),
-                        Color.black.opacity(0.84)
+                        Color.black.opacity(
+                            0.20
+                        ),
+                        Color.black.opacity(
+                            0.60
+                        ),
+                        Color.black.opacity(
+                            0.84
+                        )
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: 360)
+                .frame(height: 390)
             }
             .ignoresSafeArea()
             .allowsHitTesting(false)
 
             VStack {
+
                 Spacer()
+
+                Text(
+                    light.owner ==
+                        .me
+                        ? "Your beacon"
+                        : "Partner beacon"
+                )
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(
+                    .white.opacity(
+                        0.52
+                    )
+                )
+                .padding(
+                    .bottom,
+                    10
+                )
 
                 BeaconDetailsView(
                     entry: entry
                 )
-                .padding(.horizontal, 28)
-                .padding(.bottom, 108)
+                .padding(
+                    .horizontal,
+                    28
+                )
+                .padding(
+                    .bottom,
+                    108
+                )
             }
         }
-        .contentShape(Rectangle())
+        .contentShape(
+            Rectangle()
+        )
         .onTapGesture {
             withAnimation(
-                .easeInOut(duration: 0.35)
+                .easeInOut(
+                    duration: 0.35
+                )
             ) {
-                selectedEntry = nil
+                selectedLight = nil
             }
         }
+    }
+
+    // MARK: - Accessibility
+
+    private func accessibilityLabel(
+        for light: HistoricalLight
+    ) -> String {
+
+        let owner =
+            light.owner == .me
+                ? "Your"
+                : "Partner"
+
+        let date =
+            light.entry.date.formatted(
+                date: .abbreviated,
+                time: .omitted
+            )
+
+        return
+            "\(owner) beacon from \(date)"
     }
 
     // MARK: - Empty State
 
     private var emptyState: some View {
         VStack(spacing: 12) {
+
             Spacer()
 
-            Image(systemName: "water.waves")
-                .font(.system(size: 28))
-                .foregroundStyle(
-                    .white.opacity(0.40)
+            Image(
+                systemName:
+                    "water.waves"
+            )
+            .font(
+                .system(size: 28)
+            )
+            .foregroundStyle(
+                .white.opacity(
+                    0.40
                 )
+            )
 
             Text("No lights yet")
                 .font(.headline)
                 .foregroundStyle(
-                    .white.opacity(0.75)
+                    .white.opacity(
+                        0.75
+                    )
                 )
 
             Text(
-                "Previous beacons will quietly gather here over time."
+                "Your shared history will quietly gather here over time."
             )
             .font(.subheadline)
             .foregroundStyle(
-                .white.opacity(0.45)
+                .white.opacity(
+                    0.45
+                )
             )
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 48)
+            .multilineTextAlignment(
+                .center
+            )
+            .padding(
+                .horizontal,
+                48
+            )
 
             Spacer()
-                .frame(height: 130)
+                .frame(
+                    height: 130
+                )
         }
     }
 
@@ -817,8 +1378,12 @@ struct LanternHistoryView: View {
         RadialGradient(
             colors: [
                 Color.clear,
-                Color.black.opacity(0.04),
-                Color.black.opacity(0.27)
+                Color.black.opacity(
+                    0.04
+                ),
+                Color.black.opacity(
+                    0.27
+                )
             ],
             center: .center,
             startRadius: 160,
@@ -828,16 +1393,55 @@ struct LanternHistoryView: View {
     }
 }
 
-// MARK: - Light Placement
+// MARK: - Historical Light
 
-private struct LightPlacement {
-    let x: CGFloat
-    let y: CGFloat
-    let scale: CGFloat
+private struct HistoricalLight:
+    Identifiable {
+
+    let entry: BeaconEntry
+    let owner: HistoricalOwner
+
+    var id: String {
+        "\(owner.rawValue)-\(entry.id.uuidString)"
+    }
+}
+
+// MARK: - Historical Owner
+
+private enum HistoricalOwner:
+    String {
+
+    case me
+    case partner
+}
+
+// MARK: - Age Style
+
+private struct AgeStyle {
+
+    let scale: Double
+    let brightness: Double
+    let opacity: Double
+}
+
+// MARK: - Motion Profile
+
+private struct LightMotionProfile {
+
+    let baseX: CGFloat
+    let initialProgress: Double
+
+    let duration: Double
+
     let phase: Double
-    let speed: Double
+
+    let wanderSpeed: Double
+    let wanderAmount: CGFloat
+
+    let bobSpeed: Double
     let bobAmount: CGFloat
-    let zIndex: Double
+
+    let scale: CGFloat
 }
 
 // MARK: - Cloud Shape
@@ -847,6 +1451,7 @@ private struct HistoryCloudShape: Shape {
     func path(
         in rect: CGRect
     ) -> Path {
+
         var path = Path()
 
         path.move(
@@ -858,31 +1463,55 @@ private struct HistoryCloudShape: Shape {
 
         path.addCurve(
             to: CGPoint(
-                x: rect.width * 0.28,
-                y: rect.height * 0.46
+                x:
+                    rect.width *
+                    0.28,
+                y:
+                    rect.height *
+                    0.46
             ),
             control1: CGPoint(
-                x: rect.width * 0.06,
-                y: rect.height * 0.78
+                x:
+                    rect.width *
+                    0.06,
+                y:
+                    rect.height *
+                    0.78
             ),
             control2: CGPoint(
-                x: rect.width * 0.12,
-                y: rect.height * 0.44
+                x:
+                    rect.width *
+                    0.12,
+                y:
+                    rect.height *
+                    0.44
             )
         )
 
         path.addCurve(
             to: CGPoint(
-                x: rect.width * 0.54,
-                y: rect.height * 0.25
+                x:
+                    rect.width *
+                    0.54,
+                y:
+                    rect.height *
+                    0.25
             ),
             control1: CGPoint(
-                x: rect.width * 0.34,
-                y: rect.height * 0.14
+                x:
+                    rect.width *
+                    0.34,
+                y:
+                    rect.height *
+                    0.14
             ),
             control2: CGPoint(
-                x: rect.width * 0.46,
-                y: rect.height * 0.15
+                x:
+                    rect.width *
+                    0.46,
+                y:
+                    rect.height *
+                    0.15
             )
         )
 
@@ -892,12 +1521,20 @@ private struct HistoryCloudShape: Shape {
                 y: rect.maxY
             ),
             control1: CGPoint(
-                x: rect.width * 0.71,
-                y: rect.height * 0.08
+                x:
+                    rect.width *
+                    0.71,
+                y:
+                    rect.height *
+                    0.08
             ),
             control2: CGPoint(
-                x: rect.width * 0.89,
-                y: rect.height * 0.47
+                x:
+                    rect.width *
+                    0.89,
+                y:
+                    rect.height *
+                    0.47
             )
         )
 
@@ -914,6 +1551,7 @@ private struct HistoryHillShape: Shape {
     func path(
         in rect: CGRect
     ) -> Path {
+
         var path = Path()
 
         path.move(
@@ -925,43 +1563,65 @@ private struct HistoryHillShape: Shape {
 
         path.addLine(
             to: CGPoint(
-                x: rect.width * 0.16,
-                y: rect.height * 0.58
+                x:
+                    rect.width *
+                    0.16,
+                y:
+                    rect.height *
+                    0.58
             )
         )
 
         path.addLine(
             to: CGPoint(
-                x: rect.width * 0.32,
-                y: rect.height * 0.33
+                x:
+                    rect.width *
+                    0.32,
+                y:
+                    rect.height *
+                    0.33
             )
         )
 
         path.addLine(
             to: CGPoint(
-                x: rect.width * 0.49,
-                y: rect.height * 0.54
+                x:
+                    rect.width *
+                    0.49,
+                y:
+                    rect.height *
+                    0.54
             )
         )
 
         path.addLine(
             to: CGPoint(
-                x: rect.width * 0.67,
-                y: rect.height * 0.25
+                x:
+                    rect.width *
+                    0.67,
+                y:
+                    rect.height *
+                    0.25
             )
         )
 
         path.addLine(
             to: CGPoint(
-                x: rect.width * 0.83,
-                y: rect.height * 0.47
+                x:
+                    rect.width *
+                    0.83,
+                y:
+                    rect.height *
+                    0.47
             )
         )
 
         path.addLine(
             to: CGPoint(
                 x: rect.maxX,
-                y: rect.height * 0.30
+                y:
+                    rect.height *
+                    0.30
             )
         )
 
@@ -988,12 +1648,15 @@ private struct HistoryOceanShape: Shape {
     func path(
         in rect: CGRect
     ) -> Path {
+
         var path = Path()
 
         path.move(
             to: CGPoint(
                 x: rect.minX,
-                y: rect.minY + amplitude
+                y:
+                    rect.minY +
+                    amplitude
             )
         )
 
@@ -1004,16 +1667,25 @@ private struct HistoryOceanShape: Shape {
             through: rect.maxX,
             by: step
         ) {
+
             let progress =
-                (x - rect.minX) / rect.width
+                (
+                    x -
+                    rect.minX
+                )
+                /
+                rect.width
 
             let y =
                 rect.minY +
                 amplitude +
                 sin(
-                    progress * .pi * 2.2 +
+                    progress *
+                    .pi *
+                    2.2 +
                     phase
-                ) *
+                )
+                *
                 amplitude
 
             path.addLine(
@@ -1047,12 +1719,20 @@ private struct HistoryOceanShape: Shape {
 // MARK: - Preview
 
 #Preview {
+
     LanternHistoryView(
-        entries:
+        myEntries:
             Array(
                 PartnerBeaconStore
                     .sampleEntries
-                    .prefix(8)
+                    .prefix(4)
+            ),
+        partnerEntries:
+            Array(
+                PartnerBeaconStore
+                    .sampleEntries
+                    .dropFirst(4)
+                    .prefix(4)
             )
     )
 }

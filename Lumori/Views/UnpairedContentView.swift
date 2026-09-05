@@ -32,7 +32,8 @@ struct UnpairedContentView: View {
             // MARK: Sea
 
             LanternHistoryView(
-                entries: []
+                myEntries: [],
+                partnerEntries: []
             )
             .tabItem {
                 Label(

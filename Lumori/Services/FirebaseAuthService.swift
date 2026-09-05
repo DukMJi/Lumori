@@ -210,6 +210,42 @@ final class FirebaseAuthService: ObservableObject {
             return false
         }
     }
+    
+    // MARK: - Password Reset
+
+    /// Sends Firebase's password-reset email for an existing Lumori account.
+    func sendPasswordReset(
+        email: String
+    ) async -> Bool {
+
+        let cleanedEmail = normalizeEmail(email)
+
+        errorMessage = nil
+
+        guard isValidEmail(cleanedEmail) else {
+            errorMessage = "Enter a valid email address."
+            return false
+        }
+
+        do {
+            try await Auth.auth().sendPasswordReset(
+                withEmail: cleanedEmail
+            )
+
+            print("📩 Lumori password reset email sent")
+            print(cleanedEmail)
+
+            return true
+
+        } catch {
+            errorMessage = authMessage(for: error)
+
+            print("❌ Password reset failed:")
+            print(error.localizedDescription)
+
+            return false
+        }
+    }
 
     // MARK: - Sign Out
 

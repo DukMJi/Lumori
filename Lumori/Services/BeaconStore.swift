@@ -10,21 +10,27 @@ import FirebaseFirestore
 /// Lumori keeps one user beacon per calendar day. Saving again on the
 /// same day updates that day's entry instead of creating a duplicate.
 ///
-/// Entries are stored locally first and then synchronized to the
-/// user's shared Firebase connection.
+/// Entries are stored locally first and synchronized to Firebase.
+///
+/// When the user is connected, BeaconStore also listens to the current
+/// user's own Firebase beacon history so the archive can be restored
+/// after signing in on another device or reinstalling Lumori.
 @MainActor
 final class BeaconStore: ObservableObject {
 
     // MARK: - Published Properties
 
     /// User beacon entries ordered from newest to oldest.
-    @Published private(set) var entries: [BeaconEntry]
+    @Published private(set)
+    var entries: [BeaconEntry]
 
     /// Causes date-dependent state to refresh when the day changes.
-    @Published private(set) var dayReference = Date()
+    @Published private(set)
+    var dayReference = Date()
 
     /// The most recent Firebase synchronization error, if one occurred.
-    @Published private(set) var syncErrorMessage: String?
+    @Published private(set)
+    var syncErrorMessage: String?
 
     // MARK: - Local Storage
 
@@ -35,6 +41,9 @@ final class BeaconStore: ObservableObject {
 
     private let db =
         Firestore.firestore()
+
+    private var beaconListener:
+        ListenerRegistration?
 
     // MARK: - Private Properties
 
@@ -54,7 +63,11 @@ final class BeaconStore: ObservableObject {
 
     deinit {
 
-        midnightRefreshTask?.cancel()
+        midnightRefreshTask?
+            .cancel()
+
+        beaconListener?
+            .remove()
     }
 
     // MARK: - Computed Properties
@@ -62,25 +75,16 @@ final class BeaconStore: ObservableObject {
     /// Returns the current user's beacon when it was shared today.
     var currentMyBeacon: BeaconEntry? {
 
-        guard let newestEntry =
-                entries.first else {
+        entries.first { entry in
 
-            return nil
+            Calendar
+                .autoupdatingCurrent
+                .isDate(
+                    entry.date,
+                    inSameDayAs:
+                        effectiveDayReference
+                )
         }
-
-        guard Calendar
-            .autoupdatingCurrent
-            .isDate(
-                newestEntry.date,
-                inSameDayAs:
-                    effectiveDayReference
-            )
-        else {
-
-            return nil
-        }
-
-        return newestEntry
     }
 
     /// Returns all feelings previously entered by the user.
@@ -102,16 +106,18 @@ final class BeaconStore: ObservableObject {
                     )
                     .lowercased()
 
-            guard !normalizedFeeling.isEmpty
+            guard
+                !normalizedFeeling.isEmpty
             else {
                 return nil
             }
 
-            guard seenFeelings
-                .insert(
-                    normalizedFeeling
-                )
-                .inserted
+            guard
+                seenFeelings
+                    .insert(
+                        normalizedFeeling
+                    )
+                    .inserted
             else {
                 return nil
             }
@@ -123,14 +129,16 @@ final class BeaconStore: ObservableObject {
     /// Returns every entry that is not today's active beacon.
     var historicalEntries: [BeaconEntry] {
 
-        guard currentMyBeacon != nil
-        else {
-            return entries
-        }
+        entries.filter { entry in
 
-        return Array(
-            entries.dropFirst()
-        )
+            !Calendar
+                .autoupdatingCurrent
+                .isDate(
+                    entry.date,
+                    inSameDayAs:
+                        effectiveDayReference
+                )
+        }
     }
 
     // MARK: - Date Reference
@@ -201,7 +209,8 @@ final class BeaconStore: ObservableObject {
 
         let now = Date()
 
-        let entryToSave: BeaconEntry
+        let entryToSave:
+            BeaconEntry
 
         // MARK: Update Existing Day
 
@@ -213,13 +222,16 @@ final class BeaconStore: ObservableObject {
                         .autoupdatingCurrent
                         .isDate(
                             $0.date,
-                            inSameDayAs: now
+                            inSameDayAs:
+                                now
                         )
                 }
             ) {
 
             let existingEntry =
-                entries[todayIndex]
+                entries[
+                    todayIndex
+                ]
 
             let updatedEntry =
                 BeaconEntry(
@@ -239,7 +251,9 @@ final class BeaconStore: ObservableObject {
                         now
                 )
 
-            entries[todayIndex] =
+            entries[
+                todayIndex
+            ] =
                 updatedEntry
 
             entryToSave =
@@ -291,6 +305,243 @@ final class BeaconStore: ObservableObject {
         }
     }
 
+    // MARK: - Firebase History Listener
+
+    /// Begins listening to the signed-in user's own beacon documents
+    /// inside the active Lumori connection.
+    ///
+    /// This restores historical beacons from Firebase and keeps the
+    /// local archive synchronized across installations and devices.
+    func startListening() async {
+
+        stopListening()
+
+        syncErrorMessage = nil
+
+        guard let firebaseUser =
+                Auth.auth().currentUser
+        else {
+            return
+        }
+
+        let uid =
+            firebaseUser.uid
+
+        do {
+
+            // MARK: Find Current Connection
+
+            let userSnapshot =
+                try await db
+                    .collection(
+                        "users"
+                    )
+                    .document(
+                        uid
+                    )
+                    .getDocument()
+
+            guard let userData =
+                    userSnapshot.data()
+            else {
+                return
+            }
+
+            guard let connectionID =
+                    userData[
+                        "connectionID"
+                    ] as? String,
+                  !connectionID.isEmpty
+            else {
+
+                return
+            }
+
+            let query =
+                db
+                    .collection(
+                        "connections"
+                    )
+                    .document(
+                        connectionID
+                    )
+                    .collection(
+                        "beacons"
+                    )
+                    .whereField(
+                        "ownerID",
+                        isEqualTo:
+                            uid
+                    )
+
+            beaconListener =
+                query
+                    .addSnapshotListener {
+                        [weak self]
+                        snapshot,
+                        error in
+
+                        guard let self
+                        else {
+                            return
+                        }
+
+                        if let error {
+
+                            Task {
+                                @MainActor in
+
+                                self.syncErrorMessage =
+                                    error.localizedDescription
+
+                                print(
+                                    "🔥 Own beacon listener error:",
+                                    error.localizedDescription
+                                )
+                            }
+
+                            return
+                        }
+
+                        guard let snapshot
+                        else {
+                            return
+                        }
+
+                        let firebaseEntries =
+                            snapshot
+                                .documents
+                                .compactMap {
+                                    document
+                                    -> BeaconEntry? in
+
+                                    do {
+
+                                        let firebaseEntry =
+                                            try document
+                                                .data(
+                                                    as:
+                                                        FirestoreBeaconEntry.self
+                                                )
+
+                                        return firebaseEntry
+                                            .asBeaconEntry()
+
+                                    } catch {
+
+                                        print(
+                                            "🔥 Unable to decode own Firebase beacon:",
+                                            error.localizedDescription
+                                        )
+
+                                        return nil
+                                    }
+                                }
+
+                        Task {
+                            @MainActor in
+
+                            self
+                                .mergeFirebaseEntries(
+                                    firebaseEntries
+                                )
+                        }
+                    }
+
+            print(
+                "🌊 Listening for own beacons:"
+            )
+
+            print(uid)
+
+        } catch {
+
+            syncErrorMessage =
+                error.localizedDescription
+
+            print(
+                "🔥 Unable to start own beacon listener:",
+                error.localizedDescription
+            )
+        }
+    }
+
+    /// Stops listening to the current user's Firebase beacon history.
+    func stopListening() {
+
+        beaconListener?
+            .remove()
+
+        beaconListener =
+            nil
+    }
+
+    // MARK: - Merge Firebase History
+
+    /// Merges Firebase history into locally stored history.
+    ///
+    /// Matching calendar days are replaced by the Firebase version.
+    /// This prevents duplicate daily beacons when restoring from another
+    /// device while preserving local-only entries that may have existed
+    /// before the user connected.
+    private func mergeFirebaseEntries(
+        _ firebaseEntries: [BeaconEntry]
+    ) {
+
+        var mergedEntries =
+            entries
+
+        let calendar =
+            Calendar.autoupdatingCurrent
+
+        for firebaseEntry
+            in firebaseEntries {
+
+            if let existingIndex =
+                mergedEntries
+                    .firstIndex(
+                        where: {
+
+                            calendar
+                                .isDate(
+                                    $0.date,
+                                    inSameDayAs:
+                                        firebaseEntry.date
+                                )
+                        }
+                    ) {
+
+                mergedEntries[
+                    existingIndex
+                ] =
+                    firebaseEntry
+
+            } else {
+
+                mergedEntries.append(
+                    firebaseEntry
+                )
+            }
+        }
+
+        entries =
+            mergedEntries
+
+        sortEntries()
+
+        saveEntries()
+
+        refreshDailyState()
+
+        print(
+            "🌊 Own beacons updated:"
+        )
+
+        print(
+            firebaseEntries.count
+        )
+    }
+
     // MARK: - Firebase Synchronization
 
     /// Synchronizes one local beacon to the currently paired
@@ -328,8 +579,12 @@ final class BeaconStore: ObservableObject {
 
             let userReference =
                 db
-                    .collection("users")
-                    .document(uid)
+                    .collection(
+                        "users"
+                    )
+                    .document(
+                        uid
+                    )
 
             let userSnapshot =
                 try await userReference
@@ -407,7 +662,8 @@ final class BeaconStore: ObservableObject {
 
             try beaconReference
                 .setData(
-                    from: firebaseBeacon
+                    from:
+                        firebaseBeacon
                 )
 
             print(
@@ -474,7 +730,8 @@ final class BeaconStore: ObservableObject {
             )
 
         midnightRefreshTask =
-            Task { [weak self] in
+            Task {
+                [weak self] in
 
                 do {
 
@@ -490,7 +747,8 @@ final class BeaconStore: ObservableObject {
                     return
                 }
 
-                guard !Task.isCancelled
+                guard
+                    !Task.isCancelled
                 else {
                     return
                 }
@@ -569,7 +827,8 @@ final class BeaconStore: ObservableObject {
 
         debugDayOffset += 1
 
-        objectWillChange.send()
+        objectWillChange
+            .send()
     }
 
     /// Restores daily behavior to the real current date.
@@ -613,7 +872,8 @@ final class BeaconStore: ObservableObject {
     private func loadEntries() {
 
         guard let data =
-                UserDefaults.standard
+                UserDefaults
+                    .standard
                     .data(
                         forKey:
                             storageKey
@@ -686,11 +946,13 @@ private enum BeaconSyncError:
 
         case .userProfileMissing:
 
-            return "Lumori couldn't find your Firebase profile."
+            return
+                "Lumori couldn't find your Firebase profile."
 
         case .notConnected:
 
-            return "This Lumori account is not connected to a partner."
+            return
+                "This Lumori account is not connected to a partner."
         }
     }
 }

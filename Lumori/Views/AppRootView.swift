@@ -169,10 +169,16 @@ struct AppRootView: View {
 
         if connectionStore.isConnected {
 
+            await beaconStore
+                .startListening()
+
             await partnerBeaconStore
                 .startListening()
 
         } else {
+
+            beaconStore
+                .stopListening()
 
             partnerBeaconStore
                 .stopListening()

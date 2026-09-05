@@ -2,8 +2,6 @@ import SwiftUI
 
 // MARK: - Existing Account Sign In
 
-/// Allows a returning Lumori user to recover an account that was previously
-/// secured with email and password.
 struct ExistingAccountSignInView: View {
 
     // MARK: - Environment
@@ -31,6 +29,12 @@ struct ExistingAccountSignInView: View {
     @State
     private var password = ""
 
+    @State
+    private var isSendingPasswordReset = false
+
+    @State
+    private var passwordResetMessage: String?
+
     @FocusState
     private var focusedField: Field?
 
@@ -51,16 +55,37 @@ struct ExistingAccountSignInView: View {
 
                 ScrollView {
                     VStack(spacing: 24) {
+
                         header
 
                         credentials
 
+                        forgotPasswordButton
+
                         signInButton
+
+                        if let resetMessage =
+                            passwordResetMessage {
+
+                            Text(resetMessage)
+                                .font(.footnote)
+                                .foregroundStyle(
+                                    .green.opacity(0.9)
+                                )
+                                .multilineTextAlignment(
+                                    .center
+                                )
+                                .frame(
+                                    maxWidth: .infinity
+                                )
+                        }
 
                         if let errorMessage =
                             firebaseAuthService.errorMessage {
 
-                            errorText(errorMessage)
+                            errorText(
+                                errorMessage
+                            )
                         }
                     }
                     .padding(.horizontal, 24)
@@ -70,6 +95,7 @@ struct ExistingAccountSignInView: View {
             }
             .navigationTitle("Sign In")
             .navigationBarTitleDisplayMode(.inline)
+
             .toolbar {
                 ToolbarItem(
                     placement: .topBarLeading
@@ -82,6 +108,7 @@ struct ExistingAccountSignInView: View {
             }
         }
         .preferredColorScheme(.dark)
+
         .onAppear {
             firebaseAuthService.errorMessage = nil
         }
@@ -91,9 +118,17 @@ struct ExistingAccountSignInView: View {
 
     private var header: some View {
         VStack(spacing: 10) {
-            Image(systemName: "person.crop.circle")
-                .font(.system(size: 40))
-                .foregroundStyle(.white.opacity(0.9))
+
+            Image(
+                systemName:
+                    "person.crop.circle"
+            )
+            .font(
+                .system(size: 40)
+            )
+            .foregroundStyle(
+                .white.opacity(0.9)
+            )
 
             Text("Welcome back")
                 .font(.title2)
@@ -104,8 +139,12 @@ struct ExistingAccountSignInView: View {
                 "Sign in to restore your Lumori account and connection."
             )
             .font(.subheadline)
-            .foregroundStyle(.white.opacity(0.55))
-            .multilineTextAlignment(.center)
+            .foregroundStyle(
+                .white.opacity(0.55)
+            )
+            .multilineTextAlignment(
+                .center
+            )
         }
         .frame(maxWidth: .infinity)
     }
@@ -114,11 +153,14 @@ struct ExistingAccountSignInView: View {
 
     private var credentials: some View {
         VStack(spacing: 14) {
+
             TextField(
                 "Email",
                 text: $email
             )
-            .textInputAutocapitalization(.never)
+            .textInputAutocapitalization(
+                .never
+            )
             .keyboardType(.emailAddress)
             .autocorrectionDisabled()
             .textContentType(.username)
@@ -153,16 +195,40 @@ struct ExistingAccountSignInView: View {
         }
     }
 
-    private var fieldBackground: some View {
-        RoundedRectangle(cornerRadius: 14)
-            .fill(Color.white.opacity(0.07))
-            .overlay {
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(
-                        Color.white.opacity(0.08),
-                        lineWidth: 1
-                    )
+    // MARK: - Forgot Password
+
+    private var forgotPasswordButton: some View {
+        HStack {
+            Spacer()
+
+            Button {
+                Task {
+                    await sendPasswordReset()
+                }
+            } label: {
+                if isSendingPasswordReset {
+
+                    ProgressView()
+                        .tint(.white)
+
+                } else {
+
+                    Text("Forgot password?")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
             }
+            .buttonStyle(.plain)
+            .foregroundStyle(
+                Color(
+                    hex: "#8993EB"
+                )
+            )
+            .disabled(
+                isSendingPasswordReset
+            )
+        }
+        .padding(.top, -8)
     }
 
     // MARK: - Sign In
@@ -175,9 +241,12 @@ struct ExistingAccountSignInView: View {
         } label: {
             Group {
                 if firebaseAuthService.isSigningIn {
+
                     ProgressView()
                         .tint(.white)
+
                 } else {
+
                     Text("Sign In")
                         .fontWeight(.semibold)
                 }
@@ -186,7 +255,11 @@ struct ExistingAccountSignInView: View {
             .frame(height: 46)
         }
         .buttonStyle(.borderedProminent)
-        .tint(Color(hex: "#6874D8"))
+        .tint(
+            Color(
+                hex: "#6874D8"
+            )
+        )
         .disabled(
             firebaseAuthService.isSigningIn ||
             email.trimmingCharacters(
@@ -203,15 +276,23 @@ struct ExistingAccountSignInView: View {
     ) -> some View {
         Text(message)
             .font(.footnote)
-            .foregroundStyle(.red.opacity(0.9))
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
+            .foregroundStyle(
+                .red.opacity(0.9)
+            )
+            .multilineTextAlignment(
+                .center
+            )
+            .frame(
+                maxWidth: .infinity
+            )
     }
 
-    // MARK: - Authentication
+    // MARK: - Sign In Action
 
     private func signIn() async {
         focusedField = nil
+
+        passwordResetMessage = nil
 
         let success =
             await firebaseAuthService
@@ -224,14 +305,6 @@ struct ExistingAccountSignInView: View {
             return
         }
 
-        /*
-         The authenticated Firebase UID has now changed from the temporary
-         anonymous identity to the returning user's original UID.
-
-         Reload their Lumori profile and restore the connection associated
-         with that UID.
-         */
-
         await userService
             .createOrLoadUser()
 
@@ -239,14 +312,78 @@ struct ExistingAccountSignInView: View {
             .restoreConnectionFromFirebase()
 
         if connectionStore.isConnected {
+
             await partnerBeaconStore
                 .startListening()
+
         } else {
+
             partnerBeaconStore
                 .stopListening()
         }
 
         dismiss()
+    }
+
+    // MARK: - Password Reset Action
+
+    private func sendPasswordReset() async {
+
+        focusedField = nil
+
+        passwordResetMessage = nil
+
+        firebaseAuthService.errorMessage = nil
+
+        let cleanedEmail =
+            email.trimmingCharacters(
+                in: .whitespacesAndNewlines
+            )
+
+        guard !cleanedEmail.isEmpty else {
+
+            firebaseAuthService.errorMessage =
+                "Enter your email address first."
+
+            return
+        }
+
+        isSendingPasswordReset = true
+
+        let success =
+            await firebaseAuthService
+                .sendPasswordReset(
+                    email: cleanedEmail
+                )
+
+        isSendingPasswordReset = false
+
+        guard success else {
+            return
+        }
+
+        passwordResetMessage =
+            "Password reset email sent. Check your inbox."
+    }
+
+    // MARK: - Field Background
+
+    private var fieldBackground: some View {
+        RoundedRectangle(
+            cornerRadius: 14
+        )
+        .fill(
+            Color.white.opacity(0.07)
+        )
+        .overlay {
+            RoundedRectangle(
+                cornerRadius: 14
+            )
+            .stroke(
+                Color.white.opacity(0.08),
+                lineWidth: 1
+            )
+        }
     }
 }
 
