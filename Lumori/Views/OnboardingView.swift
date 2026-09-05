@@ -17,7 +17,7 @@ struct OnboardingView: View {
     @State
     private var currentPage = 0
 
-    private let pageCount = 4
+    private let pageCount = 5
 
     var body: some View {
         ZStack {
@@ -71,14 +71,24 @@ struct OnboardingView: View {
                         "Choose a feeling, add what’s contributing to it, and update it whenever you need. Your newest beacon replaces the previous one for that day."
                 )
             ),
-
+            
             AnyView(
                 OnboardingPaperPage(
                     number: "IV",
+                    symbol: "bell.slash",
+                    title: "Only if you\nwant to know",
+                    message:
+                        "Lumori can quietly notify you when your partner shares a beacon. Notifications are off by default and can be changed anytime in Settings."
+                )
+            ),
+
+            AnyView(
+                OnboardingPaperPage(
+                    number: "V",
                     symbol: "water.waves",
                     title: "Nothing to\nkeep up with",
                     message:
-                        "No streaks. No read receipts. No activity status. No pressure. Previous beacons simply drift into Sea."
+                        "No streaks. No activity status. No pressure. Previous beacons simply drift into Sea."
                 )
             )
         ]

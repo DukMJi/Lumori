@@ -10,6 +10,9 @@
 		65281CAC3043A077005EF986 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 65281CAB3043A077005EF986 /* FirebaseAuth */; };
 		65281CAE3043A07F005EF986 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 65281CAD3043A07F005EF986 /* FirebaseFirestore */; };
 		65281CB0304C8B5E005EF986 /* BeaconSeenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65281CAF304C8B5E005EF986 /* BeaconSeenService.swift */; };
+		65281CB2304C9077005EF986 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65281CB1304C9077005EF986 /* NotificationManager.swift */; };
+		65281CB4304C9B81005EF986 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 65281CB3304C9B81005EF986 /* FirebaseMessaging */; };
+		65281CB8304CA0F4005EF986 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65281CB7304CA0F4005EF986 /* AppDelegate.swift */; };
 		65987DAA30392A8C00B9E22A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 65987DA830392A8C00B9E22A /* GoogleService-Info.plist */; };
 		65987DAB30392A8C00B9E22A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 65987DA730392A8C00B9E22A /* Assets.xcassets */; };
 		65987DAC30392A8C00B9E22A /* ConnectedContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65987D9E30392A8C00B9E22A /* ConnectedContentView.swift */; };
@@ -47,6 +50,10 @@
 
 /* Begin PBXFileReference section */
 		65281CAF304C8B5E005EF986 /* BeaconSeenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconSeenService.swift; sourceTree = "<group>"; };
+		65281CB1304C9077005EF986 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		65281CB5304C9BD8005EF986 /* Lumori.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lumori.entitlements; sourceTree = "<group>"; };
+		65281CB6304C9BE4005EF986 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		65281CB7304CA0F4005EF986 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		657176382FF753E0005E0BA1 /* Lumori.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumori.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65987D8430392A8C00B9E22A /* LumoriApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LumoriApp.swift; sourceTree = "<group>"; };
 		65987D8630392A8C00B9E22A /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
@@ -88,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65281CB4304C9B81005EF986 /* FirebaseMessaging in Frameworks */,
 				65281CAC3043A077005EF986 /* FirebaseAuth in Frameworks */,
 				65281CAE3043A07F005EF986 /* FirebaseFirestore in Frameworks */,
 			);
@@ -117,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				65987D8430392A8C00B9E22A /* LumoriApp.swift */,
+				65281CB7304CA0F4005EF986 /* AppDelegate.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -152,6 +161,7 @@
 				65987D9330392A8C00B9E22A /* UserService.swift */,
 				65987DCA30392E2F00B9E22A /* AudioManager.swift */,
 				65281CAF304C8B5E005EF986 /* BeaconSeenService.swift */,
+				65281CB1304C9077005EF986 /* NotificationManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -197,6 +207,8 @@
 		65987DA930392A8C00B9E22A /* Lumori */ = {
 			isa = PBXGroup;
 			children = (
+				65281CB6304C9BE4005EF986 /* Info.plist */,
+				65281CB5304C9BD8005EF986 /* Lumori.entitlements */,
 				65987D8530392A8C00B9E22A /* App */,
 				65987D8730392A8C00B9E22A /* Extensions */,
 				65987D8D30392A8C00B9E22A /* Models */,
@@ -236,6 +248,7 @@
 			packageProductDependencies = (
 				65281CAB3043A077005EF986 /* FirebaseAuth */,
 				65281CAD3043A07F005EF986 /* FirebaseFirestore */,
+				65281CB3304C9B81005EF986 /* FirebaseMessaging */,
 			);
 			productName = Lumori;
 			productReference = 657176382FF753E0005E0BA1 /* Lumori.app */;
@@ -296,6 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65281CB8304CA0F4005EF986 /* AppDelegate.swift in Sources */,
 				65987DAC30392A8C00B9E22A /* ConnectedContentView.swift in Sources */,
 				65987DAD30392A8C00B9E22A /* ExistingAccountSignInView.swift in Sources */,
 				65987DAE30392A8C00B9E22A /* LumoriUser.swift in Sources */,
@@ -318,6 +332,7 @@
 				65987DBC30392A8C00B9E22A /* PairingService.swift in Sources */,
 				65987DBD30392A8C00B9E22A /* BeaconStore.swift in Sources */,
 				65987DBE30392A8C00B9E22A /* ConnectionStore.swift in Sources */,
+				65281CB2304C9077005EF986 /* NotificationManager.swift in Sources */,
 				65987DBF30392A8C00B9E22A /* BeaconEntry.swift in Sources */,
 				65987DC030392A8C00B9E22A /* FirebaseAuthService.swift in Sources */,
 				65987DC130392A8C00B9E22A /* PartnerBeaconView.swift in Sources */,
@@ -459,12 +474,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Lumori/Lumori.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = BHF2548QDZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Lumori/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -494,12 +511,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Lumori/Lumori.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = BHF2548QDZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Lumori/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -568,6 +587,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 65281CAA3043A054005EF986 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		65281CB3304C9B81005EF986 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65281CAA3043A054005EF986 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

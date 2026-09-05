@@ -23,6 +23,9 @@ struct SettingsView: View {
 
     @EnvironmentObject
     private var audioManager: AudioManager
+    
+    @EnvironmentObject
+    private var notificationManager: NotificationManager
 
     // MARK: - State
 
@@ -52,6 +55,8 @@ struct SettingsView: View {
                 accountSection
 
                 soundSection
+                
+                notificationSection
 
                 appearanceSection
 
@@ -67,6 +72,11 @@ struct SettingsView: View {
             .background(Color.black)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            
+            .task {
+                await notificationManager
+                    .refreshAuthorizationStatus()
+            }
 
             .toolbar {
                 ToolbarItem(
@@ -342,6 +352,65 @@ struct SettingsView: View {
             )
         }
     }
+    
+    // MARK: - Notifications
+
+    private var notificationSection: some View {
+        Section {
+
+            Toggle(
+                "Beacon Notifications",
+                isOn: Binding(
+                    get: {
+                        notificationManager
+                            .isEnabled
+                    },
+                    set: { newValue in
+
+                        Task {
+                            await notificationManager
+                                .setEnabled(
+                                    newValue
+                                )
+                        }
+                    }
+                )
+            )
+
+            if notificationManager
+                .authorizationStatus == .denied {
+
+                Button {
+                    notificationManager
+                        .openSystemSettings()
+                } label: {
+                    Label(
+                        "Open iPhone Settings",
+                        systemImage:
+                            "gear"
+                    )
+                }
+            }
+
+        } header: {
+            Text("Notifications")
+        } footer: {
+
+            if notificationManager
+                .authorizationStatus == .denied {
+
+                Text(
+                    "Notifications are disabled in iPhone Settings."
+                )
+
+            } else {
+
+                Text(
+                    "Get notified when your partner shares a beacon. Notifications are off by default."
+                )
+            }
+        }
+    }
 
     // MARK: - Appearance
 
@@ -528,5 +597,8 @@ struct SettingsView: View {
         )
         .environmentObject(
             AudioManager()
+        )
+        .environmentObject(
+            NotificationManager()
         )
 }
